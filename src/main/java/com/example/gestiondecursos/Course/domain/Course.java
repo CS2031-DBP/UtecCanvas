@@ -1,0 +1,40 @@
+package com.example.gestiondecursos.Course.domain;
+
+import com.example.gestiondecursos.Enrollment.domain.Enrollment;
+import com.example.gestiondecursos.Instructor.domain.Instructor;
+import com.example.gestiondecursos.Lesson.domain.Lesson;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "Course_table")
+@NoArgsConstructor
+@AllArgsConstructor
+@Setter
+@Getter
+public class Course {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String title;
+
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "instructor_id")
+    private Instructor instructor;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Lesson> lessonList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Enrollment> enrollmentList = new ArrayList<>();
+
+}
