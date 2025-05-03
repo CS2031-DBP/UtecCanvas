@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -24,6 +25,10 @@ public class Evaluation {
     private String title;
 
     private Integer maxScore;
+
+    private String instructions;
+
+    private LocalDateTime createdAt;
 
     private LocalDateTime dueDate;
 

@@ -27,6 +27,8 @@ public class Course {
 
     private String description;
 
+    private String section;
+
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;

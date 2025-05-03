@@ -20,7 +20,7 @@ public class Question{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String content;
+    private String question;
 
     @ManyToOne
     @JoinColumn(name = "quiz_idd")

@@ -26,6 +26,8 @@ public class Lesson {
 
     private String content;
 
+    private String material;
+
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;

@@ -24,5 +24,9 @@ public class User {
 
     private String password;
 
+    private String description;
+
     private String profilePhoto;
+
+    private Roles roles;
 }
