@@ -1,5 +1,6 @@
 package com.example.gestiondecursos.Evaluation.domain;
 
+import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Lesson.domain.Lesson;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -34,5 +35,5 @@ public class Evaluation {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
-    private Lesson lesson;
+    private Course course;
 }

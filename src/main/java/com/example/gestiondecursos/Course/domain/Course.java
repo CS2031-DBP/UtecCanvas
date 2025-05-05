@@ -1,6 +1,7 @@
 package com.example.gestiondecursos.Course.domain;
 
 import com.example.gestiondecursos.Enrollment.domain.Enrollment;
+import com.example.gestiondecursos.Evaluation.domain.Evaluation;
 import com.example.gestiondecursos.Instructor.domain.Instructor;
 import com.example.gestiondecursos.Lesson.domain.Lesson;
 import jakarta.persistence.*;
@@ -29,6 +30,9 @@ public class Course {
 
     private String section;
 
+    @Column(unique = true)
+    private String category; //Laboratorio o teoria
+
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private Instructor instructor;
@@ -39,4 +43,6 @@ public class Course {
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Enrollment> enrollmentList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Evaluation> evaluations = new ArrayList<>();
 }

@@ -22,6 +22,6 @@ import java.util.List;
 @Getter
 public class Student extends User {
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     private List<Enrollment> enrollmentList = new ArrayList<>();
 }

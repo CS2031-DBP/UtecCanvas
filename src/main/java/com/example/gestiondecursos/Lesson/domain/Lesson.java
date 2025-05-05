@@ -2,6 +2,7 @@ package com.example.gestiondecursos.Lesson.domain;
 
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Evaluation.domain.Evaluation;
+import com.example.gestiondecursos.Material.domain.Material;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,14 +25,15 @@ public class Lesson {
 
     private String title;
 
-    private String content;
+    private Integer week;
 
-    private String material;
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
+    private List<Material> materials;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToMany(mappedBy = "lesson")
-    private List<Evaluation> evaluations = new ArrayList<>();
+//    @OneToMany(mappedBy = "lesson")
+//    private List<Evaluation> evaluations = new ArrayList<>();
 }

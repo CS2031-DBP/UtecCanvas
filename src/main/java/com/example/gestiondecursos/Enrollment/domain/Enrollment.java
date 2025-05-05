@@ -21,7 +21,9 @@ public class Enrollment {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private LocalDateTime enrolledAt;
+    private LocalDateTime enrolled;
+
+//    private Integer maxScore;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -30,4 +32,6 @@ public class Enrollment {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
+
+
 }

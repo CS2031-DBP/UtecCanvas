@@ -5,7 +5,10 @@ import com.example.gestiondecursos.Evaluation.infrastructure.BaseEvaluationRepos
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Transactional
 @Repository
 public interface AssignmentRepository extends BaseEvaluationRepository<Assignment> {
+    Optional<Assignment> findByTitle(String title);
 }
