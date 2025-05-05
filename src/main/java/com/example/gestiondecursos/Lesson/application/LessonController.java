@@ -2,6 +2,7 @@ package com.example.gestiondecursos.Lesson.application;
 
 import com.example.gestiondecursos.Lesson.domain.Lesson;
 import com.example.gestiondecursos.Lesson.domain.LessonService;
+import com.example.gestiondecursos.Lesson.dto.LessonResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +21,14 @@ public class LessonController {
     }
 
     @GetMapping("/title/{title}")
-    public ResponseEntity<Lesson> getLessonByTitle(@PathVariable String title){
-        Lesson lesson = lessonService.getLessonByTitle(title);
+    public ResponseEntity<LessonResponseDTO> getLessonByTitle(@PathVariable String title){
+        LessonResponseDTO lesson = lessonService.getLessonByTitle(title);
         return ResponseEntity.status(HttpStatus.OK).body(lesson);
     }
 
     @GetMapping("/getByWeek/{week}")
-    public ResponseEntity<Lesson> getLessonByWeek(@PathVariable Integer week){
-        Lesson lesson = lessonService.getLessonByWeek(week);
+    public ResponseEntity<LessonResponseDTO> getLessonByWeek(@PathVariable Integer week){
+        LessonResponseDTO lesson = lessonService.getLessonByWeek(week);
         return ResponseEntity.status(HttpStatus.OK).body(lesson);
     }
 

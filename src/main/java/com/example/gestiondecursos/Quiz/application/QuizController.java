@@ -1,5 +1,6 @@
 package com.example.gestiondecursos.Quiz.application;
 
+import com.example.gestiondecursos.Quiz.Dto.QuizResponseDTO;
 import com.example.gestiondecursos.Quiz.domain.Quiz;
 import com.example.gestiondecursos.Quiz.domain.QuizService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,14 @@ public class QuizController {
     private final QuizService quizService;
 
     @PostMapping("/courseId/{id}")
-    public ResponseEntity<Quiz> createQuiz(@PathVariable Long id, @RequestBody Quiz quiz1){
-        Quiz quiz = quizService.createQuiz(id, quiz1);
-        return ResponseEntity.status(HttpStatus.CREATED).body(quiz);
+    public ResponseEntity<Void> createQuiz(@PathVariable Long id, @RequestBody Quiz quiz1){
+        quizService.createQuiz(id, quiz1);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/title/{title}")
+    public ResponseEntity<QuizResponseDTO> getQuizByTitle(@PathVariable String title){
+        QuizResponseDTO quizResponseDTO = quizService.getQuizByTitle(title);
+        return ResponseEntity.status(HttpStatus.OK).body(quizResponseDTO);
     }
 }

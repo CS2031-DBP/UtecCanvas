@@ -24,12 +24,16 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private String section;
 
+    @Column(nullable = false)
     private String category; //Laboratorio o teoria
 
     @ManyToOne

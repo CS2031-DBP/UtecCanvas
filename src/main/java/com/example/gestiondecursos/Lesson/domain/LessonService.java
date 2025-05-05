@@ -3,12 +3,17 @@ package com.example.gestiondecursos.Lesson.domain;
 
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Course.infrastructure.CourseRepository;
+import com.example.gestiondecursos.Lesson.dto.LessonResponseDTO;
 import com.example.gestiondecursos.Lesson.infrastructure.LessonRepository;
 import com.example.gestiondecursos.Material.domain.Material;
 import com.example.gestiondecursos.Material.domain.MaterialService;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +21,7 @@ public class LessonService {
     private final LessonRepository lessonRepository;
     private final CourseRepository courseRepository;
     private final MaterialService materialService;
+    private final ModelMapper modelMapper;
 
     public void createLesson(Long id, Lesson lesson){
         Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
@@ -27,14 +33,24 @@ public class LessonService {
         lessonRepository.save(lesson1);
     }
 
-    public Lesson getLessonByTitle(String title){
+    public LessonResponseDTO getLessonByTitle(String title){
         Lesson lesson = lessonRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
-        return lesson;
+        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
+        lessonResponseDTO.setCourseTitle(lesson.getCourse().getTitle());
+        List<String> materialNames = lesson.getMaterials().stream()
+                .map(Material::getTitle).collect(Collectors.toList());
+        lessonResponseDTO.setMaterialTitles(materialNames);
+        return lessonResponseDTO;
     }
 
-    public Lesson getLessonByWeek(Integer week){
+    public LessonResponseDTO getLessonByWeek(Integer week){
         Lesson lesson = lessonRepository.findByWeek(week).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
-        return lesson;
+        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
+        lessonResponseDTO.setCourseTitle(lesson.getCourse().getTitle());
+        List<String> materialNames = lesson.getMaterials().stream()
+                .map(Material::getTitle).collect(Collectors.toList());
+        lessonResponseDTO.setMaterialTitles(materialNames);
+        return lessonResponseDTO;
     }
 
     public void deleteLesson(Long id){

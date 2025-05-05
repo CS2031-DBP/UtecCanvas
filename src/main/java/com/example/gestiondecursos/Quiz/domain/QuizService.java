@@ -2,9 +2,11 @@ package com.example.gestiondecursos.Quiz.domain;
 
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Course.infrastructure.CourseRepository;
+import com.example.gestiondecursos.Quiz.Dto.QuizResponseDTO;
 import com.example.gestiondecursos.Quiz.infrastructure.QuizRepository;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,8 +16,9 @@ import java.time.LocalDateTime;
 public class QuizService {
     private final QuizRepository quizRepository;
     private final CourseRepository courseRepository;
+    private final ModelMapper modelMapper;
 
-    public Quiz createQuiz(Long id, Quiz quiz){
+    public void createQuiz(Long id, Quiz quiz){
         Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
         Quiz newQuiz = new Quiz();
         newQuiz.setTitle(quiz.getTitle());
@@ -26,8 +29,13 @@ public class QuizService {
         newQuiz.setCourse(course);
         quizRepository.save(newQuiz);
         course.getEvaluations().add(newQuiz);
-        return newQuiz;
     }
 
+    public QuizResponseDTO getQuizByTitle(String title){
+        Quiz quiz = quizRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFound("Quiz not found"));
+        QuizResponseDTO quizResponseDTO = modelMapper.map(quiz, QuizResponseDTO.class);
+        quizResponseDTO.setQuestionCount(quiz.getQuestions().size());
+        return quizResponseDTO;
+    }
 
 }

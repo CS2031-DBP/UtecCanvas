@@ -2,6 +2,7 @@ package com.example.gestiondecursos.Course.application;
 
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Course.domain.CourseService;
+import com.example.gestiondecursos.Course.dto.CourseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<Course> getById(@PathVariable Long id){
-        Course course = courseService.getById(id);
+    public ResponseEntity<CourseResponseDTO> getById(@PathVariable Long id){
+        CourseResponseDTO course = courseService.getById(id);
         return ResponseEntity.status(HttpStatus.OK).body(course);
     }
 
@@ -34,20 +35,20 @@ public class CourseController {
     }
 
     @GetMapping("/getByTitle/{title}")
-    public ResponseEntity<List<Course>> getAllByTitle(@PathVariable String title){
-        List<Course> course = courseService.getAllByTitle(title);
+    public ResponseEntity<List<CourseResponseDTO>> getAllByTitle(@PathVariable String title){
+        List<CourseResponseDTO> course = courseService.getAllByTitle(title);
         return ResponseEntity.status(HttpStatus.OK).body(course);
     }
 
     @GetMapping("/getByTitle/{title}/category/{category}")
-    public ResponseEntity<Course> getByTitleAndCategory(@PathVariable String title, @PathVariable String category){
-        Course course = courseService.getCourseByTitleAndCategory(title, category);
+    public ResponseEntity<CourseResponseDTO> getByTitleAndCategory(@PathVariable String title, @PathVariable String category){
+        CourseResponseDTO course = courseService.getCourseByTitleAndCategory(title, category);
         return ResponseEntity.status(HttpStatus.OK).body(course);
     }
 
     @GetMapping("/getByTitle/{title}/section/{section}")
-    public ResponseEntity<Course> getByTitleAndSection(@PathVariable String title, @PathVariable String section){
-        Course course = courseService.getCourseByTitleAndSection(title, section);
+    public ResponseEntity<CourseResponseDTO> getByTitleAndSection(@PathVariable String title, @PathVariable String section){
+        CourseResponseDTO course = courseService.getCourseByTitleAndSection(title, section);
         return ResponseEntity.status(HttpStatus.OK).body(course);
     }
 

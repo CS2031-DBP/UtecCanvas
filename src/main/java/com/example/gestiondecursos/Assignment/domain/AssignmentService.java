@@ -1,10 +1,13 @@
 package com.example.gestiondecursos.Assignment.domain;
 
+import com.example.gestiondecursos.Assignment.Dto.AssignmentRequestDTO;
+import com.example.gestiondecursos.Assignment.Dto.AssignmentResponseDTO;
 import com.example.gestiondecursos.Assignment.infrastructure.AssignmentRepository;
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Course.infrastructure.CourseRepository;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -15,8 +18,9 @@ import java.time.LocalDateTime;
 public class AssignmentService {
     private final AssignmentRepository assignmentRepository;
     private final CourseRepository courseRepository;
+    private final ModelMapper modelMapper;
 
-    public Assignment createAssignment(Long id,Assignment assignment){
+    public AssignmentResponseDTO createAssignment(Long id, AssignmentRequestDTO assignment){
         Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
         Assignment newAssignment = new Assignment();
         newAssignment.setCourse(course);
@@ -28,11 +32,12 @@ public class AssignmentService {
         newAssignment.setMaterial(assignment.getMaterial());
         newAssignment.setUploadRequired(assignment.getUploadRequired());
         Assignment assignment1 = assignmentRepository.save(newAssignment);
+        AssignmentResponseDTO assignmentResponseDTO = modelMapper.map(assignment1, AssignmentResponseDTO.class);
         course.getEvaluations().add(newAssignment);
-        return assignment1;
+        return assignmentResponseDTO;
     }
 
-    public void updateAssignment(Long id, Assignment assignment){
+    public void updateAssignment(Long id, AssignmentRequestDTO assignment){
         Assignment assignment1 = assignmentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Assignment not found"));
         if(assignment.getTitle() != null){
             assignment1.setTitle(assignment.getTitle());
@@ -60,8 +65,9 @@ public class AssignmentService {
         assignmentRepository.delete(assignment);
     }
 
-    public Assignment getByTitle(String title){
+    public AssignmentResponseDTO getByTitle(String title){
         Assignment assignment = assignmentRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFound("Assignment not found"));
-        return assignment;
+        AssignmentResponseDTO assignmentResponseDTO = modelMapper.map(assignment, AssignmentResponseDTO.class);
+        return assignmentResponseDTO;
     }
 }

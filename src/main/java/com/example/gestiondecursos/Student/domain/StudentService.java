@@ -1,35 +1,44 @@
 package com.example.gestiondecursos.Student.domain;
 
+import com.example.gestiondecursos.Student.Dto.StudentResponseDTO;
 import com.example.gestiondecursos.Student.infrastructure.StudentRepository;
+import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final ModelMapper modelMapper;
 
-    public Student getStudentByEmail(String email){
+    public StudentResponseDTO getStudentByEmail(String email){
         Student student = studentRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("Student not found"));
-        return student;
+        StudentResponseDTO studentResponseDTO = modelMapper.map(student, StudentResponseDTO.class);
+        return studentResponseDTO;
     }
 
-    public List<Student> getStudentsByName(String name){
+    public List<StudentResponseDTO> getStudentsByName(String name){
         List<Student> studentList = studentRepository.findByName(name);
-        return  studentList;
+        List<StudentResponseDTO> studentResponseDTOS = studentList.stream().map(student -> modelMapper.map(student, StudentResponseDTO.class)).collect(Collectors.toList());
+        return studentResponseDTOS;
     }
 
-    public List<Student> getStudentsByLastname(String lastname){
+    public List<StudentResponseDTO> getStudentsByLastname(String lastname){
         List<Student> studentList = studentRepository.findByLastname(lastname);
-        return  studentList;
+        List<StudentResponseDTO> studentResponseDTOS = studentList.stream().map(student -> modelMapper.map(student, StudentResponseDTO.class)).collect(Collectors.toList());
+        return studentResponseDTOS;
     }
 
-    public Student getByFullName(String name, String lastname){
+    public StudentResponseDTO getByFullName(String name, String lastname){
         Student student = studentRepository.findByNameAndLastname(name, lastname).orElseThrow(() -> new ResourceNotFound("Student not found"));
-        return student;
+        StudentResponseDTO studentResponseDTO = modelMapper.map(student, StudentResponseDTO.class);
+        return studentResponseDTO;
     }
 
     public void deleteStudent(Long id){

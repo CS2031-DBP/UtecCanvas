@@ -1,23 +1,43 @@
 package com.example.gestiondecursos.Course.domain;
 
+import com.example.gestiondecursos.Course.dto.CourseRequestDTO;
+import com.example.gestiondecursos.Course.dto.CourseResponseDTO;
 import com.example.gestiondecursos.Course.infrastructure.CourseRepository;
 import com.example.gestiondecursos.Instructor.domain.Instructor;
 import com.example.gestiondecursos.Instructor.infrastructure.InstructorRepository;
+import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CourseService {
     private final CourseRepository courseRepository;
     private final InstructorRepository instructorRepository;
+    private final ModelMapper modelMapper;
 
-    public Course getById(Long id){
+    public CourseResponseDTO getById(Long id){
         Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course Not Found"));
-        return course;
+        CourseResponseDTO courseResponseDTO = modelMapper.map(course, CourseResponseDTO.class);
+
+        Instructor instructor = course.getInstructor();
+        if(instructor == null){
+            throw new ResourceIsNullException("There is not Instructor assigned to this course");
+        }
+        if(course.getInstructor().getName() == null){
+            throw new ResourceIsNullException("There is not Instructor name to link");
+        }
+        if(course.getInstructor().getLastname() == null){
+            throw new ResourceIsNullException("There is not Instructor lastname to link");
+        }
+        courseResponseDTO.setInstructorName(course.getInstructor().getName());
+        courseResponseDTO.setInstructorLastname(course.getInstructor().getLastname());
+        return courseResponseDTO;
     }
 
     public void createCourse(Course course){
@@ -25,7 +45,6 @@ public class CourseService {
         newCourse.setTitle(course.getTitle());
         newCourse.setDescription(course.getDescription());
         newCourse.setSection(course.getSection());
-        newCourse.setDescription(course.getDescription());
         newCourse.setCategory(course.getCategory());
         courseRepository.save(newCourse);
     }
@@ -50,19 +69,28 @@ public class CourseService {
         courseRepository.save(course1);
     }
 
-    public List<Course> getAllByTitle(String title){
+    public List<CourseResponseDTO> getAllByTitle(String title){
         List<Course> courseList = courseRepository.findAllByTitle(title);
-        return courseList;
+        return courseList.stream()
+                .map(course -> {
+                    CourseResponseDTO courseResponseDTO = modelMapper.map(course, CourseResponseDTO.class);
+                    courseResponseDTO.setInstructorName(course.getInstructor().getName());
+                    courseResponseDTO.setInstructorLastname(course.getInstructor().getLastname());
+                    return courseResponseDTO;
+                }).collect(Collectors.toList());
     }
 
-    public Course getCourseByTitleAndCategory(String title, String category){
+    public CourseResponseDTO getCourseByTitleAndCategory(String title, String category){
         Course course = courseRepository.findCourseByTitleAndCategory(title, category).orElseThrow(() -> new ResourceNotFound("Course not found"));
-        return course;
+        CourseResponseDTO courseResponseDTO = modelMapper.map(course, CourseResponseDTO.class);
+        courseResponseDTO.setInstructorName(course.getInstructor().getName());
+        return courseResponseDTO;
     }
 
-    public Course getCourseByTitleAndSection(String title, String section){
+    public CourseResponseDTO getCourseByTitleAndSection(String title, String section){
         Course course = courseRepository.findCourseByTitleAndSection(title, section).orElseThrow(() -> new ResourceNotFound("Course not found"));
-        return course;
+        CourseResponseDTO courseResponseDTO = modelMapper.map(course, CourseResponseDTO.class);
+        return courseResponseDTO;
     }
 
     public void deleteCourse(Long id){

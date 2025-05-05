@@ -23,8 +23,10 @@ public class Lesson {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private Integer week;
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)

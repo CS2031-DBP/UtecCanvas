@@ -1,5 +1,6 @@
 package com.example.gestiondecursos;
 
+import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,4 +15,11 @@ public class GlobalExceptionHandler {
     public String handleResourceNotFoundException(ResourceNotFound ex){
         return ex.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ResourceIsNullException.class)
+    public String handleResourceIsNullException(ResourceIsNullException ex){
+        return ex.getMessage();
+    }
+
 }

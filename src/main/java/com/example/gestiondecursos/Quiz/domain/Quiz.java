@@ -23,6 +23,7 @@ public class Quiz extends Evaluation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
 
     @OneToMany(mappedBy = "quiz")

@@ -1,5 +1,7 @@
 package com.example.gestiondecursos.Assignment.application;
 
+import com.example.gestiondecursos.Assignment.Dto.AssignmentRequestDTO;
+import com.example.gestiondecursos.Assignment.Dto.AssignmentResponseDTO;
 import com.example.gestiondecursos.Assignment.domain.Assignment;
 import com.example.gestiondecursos.Assignment.domain.AssignmentService;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +17,13 @@ public class AssignmentController {
     private final AssignmentService assignmentService;
 
     @PostMapping("/courseId/{id}")
-    public ResponseEntity<Assignment> createAssignment(@PathVariable Long id, @RequestBody Assignment assignment){
-        Assignment assignment1 = assignmentService.createAssignment(id, assignment);
+    public ResponseEntity<AssignmentResponseDTO> createAssignment(@PathVariable Long id, @RequestBody AssignmentRequestDTO assignment){
+        AssignmentResponseDTO assignment1 = assignmentService.createAssignment(id, assignment);
         return ResponseEntity.status(HttpStatus.CREATED).body(assignment1);
     }
 
     @PatchMapping("/assignmentId/{id}")
-    public ResponseEntity<Void> updateAssignment(@PathVariable Long id, @RequestBody Assignment assignment){
+    public ResponseEntity<Void> updateAssignment(@PathVariable Long id, @RequestBody AssignmentRequestDTO assignment){
         assignmentService.updateAssignment(id, assignment);
         return ResponseEntity.noContent().build();
     }
@@ -33,8 +35,8 @@ public class AssignmentController {
     }
 
     @GetMapping("/getByTitle/{title}")
-    public ResponseEntity<Assignment> getByTitle(@PathVariable String title){
-        Assignment assignment = assignmentService.getByTitle(title);
+    public ResponseEntity<AssignmentResponseDTO> getByTitle(@PathVariable String title){
+        AssignmentResponseDTO assignment = assignmentService.getByTitle(title);
         return ResponseEntity.status(HttpStatus.OK).body(assignment);
     }
 }

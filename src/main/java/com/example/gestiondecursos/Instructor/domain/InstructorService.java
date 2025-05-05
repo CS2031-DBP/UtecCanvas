@@ -1,34 +1,44 @@
 package com.example.gestiondecursos.Instructor.domain;
 
+import com.example.gestiondecursos.Instructor.dto.InstructorResponseDTO;
 import com.example.gestiondecursos.Instructor.infrastructure.InstructorRepository;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class InstructorService {
     private final InstructorRepository instructorRepository;
+    private final ModelMapper modelMapper;
 
-    public List<Instructor> getAllInstructors(){
-        return instructorRepository.findAll();
+
+    public List<InstructorResponseDTO> getAllInstructors(){
+        List<Instructor> instructors = instructorRepository.findAll();
+        List<InstructorResponseDTO> instructorResponseDTOS = instructors.stream().map(instructor -> modelMapper.map(instructor, InstructorResponseDTO.class)).collect(Collectors.toList());
+        return instructorResponseDTOS;
     }
 
-    public Instructor getInstructorByNameAndLastname(String name, String lastname){
+    public InstructorResponseDTO getInstructorByNameAndLastname(String name, String lastname){
         Instructor instructor = instructorRepository.findByNameAndLastname(name, lastname).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
-        return instructor;
+        InstructorResponseDTO instructorResponseDTO = modelMapper.map(instructor, InstructorResponseDTO.class);
+        return instructorResponseDTO;
     }
 
-    public List<Instructor> getInstructorsByName(String name){
+    public List<InstructorResponseDTO> getInstructorsByName(String name){
         List<Instructor> instructors = instructorRepository.findByName(name);
-        return instructors;
+        List<InstructorResponseDTO> instructorResponseDTOS = instructors.stream().map(instructor -> modelMapper.map(instructor, InstructorResponseDTO.class)).collect(Collectors.toList());
+        return instructorResponseDTOS;
     }
 
-    public Instructor getByEmail(String email){
+    public InstructorResponseDTO getByEmail(String email){
         Instructor instructor = instructorRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
-        return instructor;
+        InstructorResponseDTO instructorResponseDTO = modelMapper.map(instructor, InstructorResponseDTO.class);
+        return instructorResponseDTO;
     }
 
     public void updateInstructor(Long id, Instructor instructor){

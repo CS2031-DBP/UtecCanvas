@@ -2,6 +2,7 @@ package com.example.gestiondecursos.Instructor.application;
 
 import com.example.gestiondecursos.Instructor.domain.Instructor;
 import com.example.gestiondecursos.Instructor.domain.InstructorService;
+import com.example.gestiondecursos.Instructor.dto.InstructorResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,26 +17,26 @@ public class InstructorController {
     private final InstructorService instructorService;
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Instructor>> allInstructors(){
-        List<Instructor> instructor = instructorService.getAllInstructors();
+    public ResponseEntity<List<InstructorResponseDTO>> allInstructors(){
+        List<InstructorResponseDTO> instructor = instructorService.getAllInstructors();
         return ResponseEntity.status(HttpStatus.OK).body(instructor);
     }
 
     @GetMapping("/name/{name}/lastname/{lastname}")
-    public ResponseEntity<Instructor> getByFullname(@PathVariable String name, @PathVariable String lastname){
-        Instructor instructor = instructorService.getInstructorByNameAndLastname(name, lastname);
+    public ResponseEntity<InstructorResponseDTO> getByFullname(@PathVariable String name, @PathVariable String lastname){
+        InstructorResponseDTO instructor = instructorService.getInstructorByNameAndLastname(name, lastname);
         return ResponseEntity.status(HttpStatus.OK).body(instructor);
     }
 
     @GetMapping("/getAllByName/{name}")
-    public ResponseEntity<List<Instructor>> getByName(@PathVariable String name){
-        List<Instructor> instructors = instructorService.getInstructorsByName(name);
+    public ResponseEntity<List<InstructorResponseDTO>> getByName(@PathVariable String name){
+        List<InstructorResponseDTO> instructors = instructorService.getInstructorsByName(name);
         return ResponseEntity.status(HttpStatus.OK).body(instructors);
     }
 
     @GetMapping("/getByEmail/{email}")
-    public ResponseEntity<Instructor> getByEmail(@PathVariable String email){
-        Instructor instructor = instructorService.getByEmail(email);
+    public ResponseEntity<InstructorResponseDTO> getByEmail(@PathVariable String email){
+        InstructorResponseDTO instructor = instructorService.getByEmail(email);
         return ResponseEntity.status(HttpStatus.OK).body(instructor);
     }
 

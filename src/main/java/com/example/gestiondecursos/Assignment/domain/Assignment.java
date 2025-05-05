@@ -1,10 +1,7 @@
 package com.example.gestiondecursos.Assignment.domain;
 
 import com.example.gestiondecursos.Evaluation.domain.Evaluation;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +19,9 @@ public class Assignment extends Evaluation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(nullable = false)
     private String material;
 
+    @Column(nullable = false)
     private Boolean uploadRequired;
 }
