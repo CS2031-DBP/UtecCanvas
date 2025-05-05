@@ -17,7 +17,7 @@ public class LessonService {
     private final CourseRepository courseRepository;
     private final MaterialService materialService;
 
-    public void createLesson(Lesson lesson, Long id){
+    public void createLesson(Long id, Lesson lesson){
         Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
         Lesson lesson1 = new Lesson();
         lesson1.setWeek(lesson.getWeek());

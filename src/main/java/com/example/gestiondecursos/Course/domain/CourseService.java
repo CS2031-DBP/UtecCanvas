@@ -26,6 +26,7 @@ public class CourseService {
         newCourse.setDescription(course.getDescription());
         newCourse.setSection(course.getSection());
         newCourse.setDescription(course.getDescription());
+        newCourse.setCategory(course.getCategory());
         courseRepository.save(newCourse);
     }
 
@@ -42,6 +43,9 @@ public class CourseService {
         }
         if(course.getSection() != null){
             course1.setSection(course.getSection());
+        }
+        if(course.getCategory() != null){
+            course1.setCategory(course.getCategory());
         }
         courseRepository.save(course1);
     }

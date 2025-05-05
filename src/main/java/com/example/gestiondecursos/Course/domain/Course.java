@@ -30,7 +30,6 @@ public class Course {
 
     private String section;
 
-    @Column(unique = true)
     private String category; //Laboratorio o teoria
 
     @ManyToOne

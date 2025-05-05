@@ -29,6 +29,11 @@ public class EnrollmentService {
         enrollmentRepository.save(enrollment);
     }
 
+    public Enrollment getEnrollmentById(Long id){
+        Enrollment enrollment = enrollmentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Enrollment not found"));
+        return enrollment;
+    }
+
     public void removeEnrollment(Long courseId, String studentEmail){
         //Enrollment enrollment = enrollmentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Enrollment not found"));
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFound("Course not found"));

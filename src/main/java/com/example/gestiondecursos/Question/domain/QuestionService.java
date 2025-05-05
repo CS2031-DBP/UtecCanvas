@@ -13,7 +13,7 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
     private final QuizRepository quizRepository;
 
-    public void CreateQuestion(Long quizId, Question question){
+    public void createQuestion(Long quizId, Question question){
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new ResourceNotFound("Quiz not found"));
         Question question1 = new Question();
         question1.setQuestion(question.getQuestion());

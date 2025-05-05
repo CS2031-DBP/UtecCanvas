@@ -42,4 +42,8 @@ public class InstructorService {
         instructorRepository.save(instructor1);
     }
 
+    public void deleteInstructor(Long id){
+        Instructor instructor1 = instructorRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
+        instructorRepository.delete(instructor1);
+    }
 }
