@@ -2,6 +2,7 @@ package com.example.gestiondecursos.Student.domain;
 
 import com.example.gestiondecursos.Student.Dto.StudentResponseDTO;
 import com.example.gestiondecursos.Student.infrastructure.StudentRepository;
+import com.example.gestiondecursos.User.domain.Roles;
 import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,20 @@ import java.util.stream.Collectors;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
+
+    public StudentResponseDTO createStudent(Student student){
+        Student student1 = new Student();
+        student1.setName(student.getName());
+        student1.setLastname(student.getLastname());
+        student1.setEmail(student.getEmail());
+        student1.setPassword(student.getPassword());
+        student1.setDescription(student.getDescription());
+        student1.setProfilePhoto(student.getProfilePhoto());
+        student1.setRole(Roles.STUDENT);
+        studentRepository.save(student1);
+        StudentResponseDTO studentResponseDTO = modelMapper.map(student1, StudentResponseDTO.class);
+        return studentResponseDTO;
+    }
 
     public StudentResponseDTO getStudentByEmail(String email){
         Student student = studentRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("Student not found"));
