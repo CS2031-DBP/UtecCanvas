@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.example.gestiondecursos.User.domain.Roles.INSTRUCTOR;
-import static com.example.gestiondecursos.User.domain.Roles.STUDENT;
+import static com.example.gestiondecursos.User.domain.Roles.*;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +55,8 @@ public class AuthService {
             JwtAuthResponse response = new JwtAuthResponse();
             response.setToken(jwtService.generatedToken(instructor));
             return response;
-        } else if (registerDTO.getRole() == "STUDENT") {
+        }
+        else if (registerDTO.getRole() == "STUDENT") {
             Student student = new Student();
             student.setName(registerDTO.getName());
             student.setLastname(registerDTO.getLastname());
@@ -68,7 +68,18 @@ public class AuthService {
             response.setToken(jwtService.generatedToken(student));
             return response;
         }
-
+        else{
+            User user1 = new User();
+            user1.setName(registerDTO.getName());
+            user1.setLastname(registerDTO.getLastname());
+            user1.setEmail(registerDTO.getEmail());
+            user1.setPassword(registerDTO.getPassword());
+            user1.setRole(ADMIN);
+            userRepository.save(user1);
+            JwtAuthResponse response = new JwtAuthResponse();
+            response.setToken(jwtService.generatedToken(user1));
+            return response;
+        }
 
 
     }
