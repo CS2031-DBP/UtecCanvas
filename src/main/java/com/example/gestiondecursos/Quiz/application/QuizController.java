@@ -6,6 +6,7 @@ import com.example.gestiondecursos.Quiz.domain.QuizService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,12 +15,14 @@ import org.springframework.web.bind.annotation.*;
 public class QuizController {
     private final QuizService quizService;
 
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/courseId/{id}")
     public ResponseEntity<Void> createQuiz(@PathVariable Long id, @RequestBody Quiz quiz1){
         quizService.createQuiz(id, quiz1);
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasRole('STUDENT')")
     @GetMapping("/title/{title}")
     public ResponseEntity<QuizResponseDTO> getQuizByTitle(@PathVariable String title){
         QuizResponseDTO quizResponseDTO = quizService.getQuizByTitle(title);

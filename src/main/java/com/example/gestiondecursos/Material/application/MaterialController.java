@@ -6,6 +6,7 @@ import com.example.gestiondecursos.Material.dto.MaterialResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class MaterialController {
     private final MaterialService materialService;
 
+    @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/week/{week}")
     public ResponseEntity<MaterialResponseDTO> createMaterial(@PathVariable Integer week, @RequestBody Material material1){
         MaterialResponseDTO material = materialService.createMaterial(week, material1);

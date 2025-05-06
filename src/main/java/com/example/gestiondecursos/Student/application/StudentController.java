@@ -8,6 +8,7 @@ import org.apache.coyote.Response;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,38 +19,44 @@ import java.util.List;
 public class StudentController {
      private final StudentService studentService;
 
+    @PreAuthorize("hasRole('STUDENT')")
      @GetMapping("/getByEmail/{email}")
      public ResponseEntity<StudentResponseDTO> getStudentByEmail(@PathVariable String email){
          StudentResponseDTO student = studentService.getStudentByEmail(email);
          return ResponseEntity.status(HttpStatus.OK).body(student);
      }
 
+     @PreAuthorize("hasRole('STUDENT')")
      @GetMapping("/getByName/{name}")
      public ResponseEntity<List<StudentResponseDTO>> getStudentByName(@PathVariable String name){
          List<StudentResponseDTO> studentList = studentService.getStudentsByName(name);
          return ResponseEntity.status(HttpStatus.OK).body(studentList);
      }
 
+     @PreAuthorize("hasRole('STUDENT')")
      @GetMapping("/getByLastname/{lastname}")
      public ResponseEntity<List<StudentResponseDTO>> getStudentByLastname(@PathVariable String lastname){
          List<StudentResponseDTO> studentList = studentService.getStudentsByLastname(lastname);
          return ResponseEntity.status(HttpStatus.OK).body(studentList);
      }
 
+     @PreAuthorize("hasRole('STUDENT')")
      @GetMapping("/getByFullName/name/{name}/lastname/{lastname}")
      public ResponseEntity<StudentResponseDTO> getByFullName(@PathVariable String name, @PathVariable String lastname){
          StudentResponseDTO student = studentService.getByFullName(name, lastname);
          return ResponseEntity.status(HttpStatus.OK).body(student);
      }
 
+     @PreAuthorize("hasRole('ADMIN')")
      @DeleteMapping("/getById/{id}")
      public ResponseEntity<Void> getStudentToDelete(@PathVariable Long id){
          studentService.deleteStudent(id);
          return ResponseEntity.noContent().build();
      }
 
+     @PreAuthorize("hasRole('STUDENT')")
      @PatchMapping("/update/{id}")
-     public ResponseEntity<Void> getStudentToDelete(@PathVariable Long id, @RequestBody Student student){
+     public ResponseEntity<Void> getStudentToUpdate(@PathVariable Long id, @RequestBody Student student){
          studentService.updateStudent(id, student);
          return ResponseEntity.noContent().build();
      }

@@ -42,7 +42,9 @@ public class AuthService {
     }
 
     public JwtAuthResponse register(RegisterDTO registerDTO){
-        User user = userRepository.findByEmail(registerDTO.getEmail()).orElseThrow(() -> new UserAlreadyExistException("Email already register"));
+        if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
+            throw new UserAlreadyExistException("Email already registered");
+        }
 
         if(registerDTO.getRole() == "INSTRUCTOR"){
             Instructor instructor = new Instructor();
@@ -80,7 +82,5 @@ public class AuthService {
             response.setToken(jwtService.generatedToken(user1));
             return response;
         }
-
-
     }
 }

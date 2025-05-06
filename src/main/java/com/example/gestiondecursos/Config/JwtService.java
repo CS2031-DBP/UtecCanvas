@@ -5,6 +5,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.gestiondecursos.User.domain.User;
 import com.example.gestiondecursos.User.domain.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,7 +36,7 @@ public class JwtService {
         Date expiration = new Date(now.getTime() +1000 * 60 * 60 * 24);
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.create()
-                .withSubject(user.getId().toString())
+                .withSubject(user.getEmail())
                 .withClaim("email", user.getEmail())
                 .withClaim("role", user.getRole().name())
                 .withIssuedAt(now)
@@ -43,7 +44,7 @@ public class JwtService {
                 .sign(algorithm);
     }
 
-    public void validateToken(String token, String userEmail) throws AuthenticationException{
+    public void validateToken(String token, String userEmail){
         JWT.require(Algorithm.HMAC256(secret)).build().verify(token);
         UserDetails userDetails = userService.userDetailsService().loadUserByUsername(userEmail);
         SecurityContext context = SecurityContextHolder.createEmptyContext();

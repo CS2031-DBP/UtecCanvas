@@ -1,11 +1,16 @@
 package com.example.gestiondecursos.Instructor.domain;
 
+import com.example.gestiondecursos.Auth.utils.AuthorizationUtils;
 import com.example.gestiondecursos.Instructor.dto.InstructorResponseDTO;
 import com.example.gestiondecursos.Instructor.infrastructure.InstructorRepository;
+import com.example.gestiondecursos.User.domain.Roles;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,6 +20,48 @@ import java.util.stream.Collectors;
 public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final ModelMapper modelMapper;
+    private final AuthorizationUtils authorizationUtils;
+
+    public InstructorResponseDTO getInstructorInfo(Long id){
+        Instructor instructor = instructorRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Instructor not found"));;
+        InstructorResponseDTO instructorResponseDTO = modelMapper.map(instructor, InstructorResponseDTO.class);
+        return instructorResponseDTO;
+    }
+
+    public InstructorResponseDTO createInstructor(Instructor instructor){
+        Instructor instructor1 = new Instructor();
+        instructor1.setName(instructor.getName());
+        instructor1.setLastname(instructor.getLastname());
+        instructor1.setEmail(instructor.getEmail());
+        instructor1.setPassword(instructor.getPassword());
+        instructor1.setDescription(instructor.getDescription());
+        instructor1.setProfilePhoto(instructor.getProfilePhoto());
+        instructor1.setRole(Roles.INSTRUCTOR);
+        instructorRepository.save(instructor1);
+        InstructorResponseDTO instructorResponseDTO = modelMapper.map(instructor1, InstructorResponseDTO.class);
+        return instructorResponseDTO;
+    }
+
+    public InstructorResponseDTO getInstructorOwnInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isInstructor = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_INSTRUCTOR"));
+
+        if (!isInstructor) {
+            throw new AccessDeniedException("Only instructors can access this resource");
+        }
+
+        String username = authorizationUtils.getCurrentUser();
+        if (username == null) {
+            throw new ResourceNotFound("User not found");
+        }
+
+        Instructor instructor = instructorRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFound("Instructor not found"));
+
+        return getInstructorInfo(instructor.getId());
+    }
 
 
     public List<InstructorResponseDTO> getAllInstructors(){

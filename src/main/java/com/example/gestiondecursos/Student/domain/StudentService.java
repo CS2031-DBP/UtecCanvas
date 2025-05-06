@@ -1,5 +1,6 @@
 package com.example.gestiondecursos.Student.domain;
 
+import com.example.gestiondecursos.Auth.utils.AuthorizationUtils;
 import com.example.gestiondecursos.Student.Dto.StudentResponseDTO;
 import com.example.gestiondecursos.Student.infrastructure.StudentRepository;
 import com.example.gestiondecursos.User.domain.Roles;
@@ -7,6 +8,9 @@ import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,30 @@ import java.util.stream.Collectors;
 public class StudentService {
     private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
+    private final AuthorizationUtils authorizationUtils;
+
+    public StudentResponseDTO getStudentInfo(Long id){
+        Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Student not found"));
+        StudentResponseDTO studentResponseDTO = modelMapper.map(student, StudentResponseDTO.class);
+        return studentResponseDTO;
+    }
+
+    public StudentResponseDTO getStudentOwnInfo() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isStudent = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
+        if (!isStudent) {
+            throw new AccessDeniedException("Only students can access this resource");
+        }
+        String username = authorizationUtils.getCurrentUser();
+        if (username == null) {
+            throw new ResourceNotFound("User not found");
+        }
+        Student student = studentRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFound("Student not found"));
+        return getStudentInfo(student.getId());
+    }
+
 
     public StudentResponseDTO createStudent(Student student){
         Student student1 = new Student();
