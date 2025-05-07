@@ -9,12 +9,14 @@ import com.example.gestiondecursos.Instructor.domain.InstructorService;
 import com.example.gestiondecursos.Student.domain.Student;
 import com.example.gestiondecursos.User.domain.User;
 import com.example.gestiondecursos.User.infrastructure.BaseUserRepository;
+import com.example.gestiondecursos.events.userRegister.UserRegisterEvent;
 import com.example.gestiondecursos.exceptions.PasswordIncorrectException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import com.example.gestiondecursos.exceptions.UserAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private final InstructorService instructorService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public JwtAuthResponse login(LoginDTO loginDTO) {
         User user = userRepository.findByEmail(loginDTO.getEmail()).orElseThrow(() -> new ResourceNotFound("User doesn't exist or incorrect email "));
@@ -51,9 +54,10 @@ public class AuthService {
             instructor.setName(registerDTO.getName());
             instructor.setLastname(registerDTO.getLastname());
             instructor.setEmail(registerDTO.getEmail());
-            instructor.setPassword(registerDTO.getPassword());
+            instructor.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
             instructor.setRole(INSTRUCTOR);
             userRepository.save(instructor);
+            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
             JwtAuthResponse response = new JwtAuthResponse();
             response.setToken(jwtService.generatedToken(instructor));
             return response;
@@ -63,9 +67,10 @@ public class AuthService {
             student.setName(registerDTO.getName());
             student.setLastname(registerDTO.getLastname());
             student.setEmail(registerDTO.getEmail());
-            student.setPassword(registerDTO.getPassword());
+            student.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
             student.setRole(STUDENT);
             userRepository.save(student);
+            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
             JwtAuthResponse response = new JwtAuthResponse();
             response.setToken(jwtService.generatedToken(student));
             return response;
@@ -75,9 +80,10 @@ public class AuthService {
             user1.setName(registerDTO.getName());
             user1.setLastname(registerDTO.getLastname());
             user1.setEmail(registerDTO.getEmail());
-            user1.setPassword(registerDTO.getPassword());
+            user1.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
             user1.setRole(ADMIN);
             userRepository.save(user1);
+            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
             JwtAuthResponse response = new JwtAuthResponse();
             response.setToken(jwtService.generatedToken(user1));
             return response;

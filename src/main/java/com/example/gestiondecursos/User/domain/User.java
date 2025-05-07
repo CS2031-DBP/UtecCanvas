@@ -43,12 +43,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Roles role;
 
-    @Transient
-    private String rolePrefix = "ROLE_";
+//    @Transient
+//    private String rolePrefix = "ROLE_";
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(rolePrefix + role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override

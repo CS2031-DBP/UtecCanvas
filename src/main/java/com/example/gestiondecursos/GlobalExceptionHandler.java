@@ -1,9 +1,6 @@
 package com.example.gestiondecursos;
 
-import com.example.gestiondecursos.exceptions.PasswordIncorrectException;
-import com.example.gestiondecursos.exceptions.ResourceIsNullException;
-import com.example.gestiondecursos.exceptions.ResourceNotFound;
-import com.example.gestiondecursos.exceptions.UserAlreadyExistException;
+import com.example.gestiondecursos.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,6 +30,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(UserAlreadyExistException.class)
     public String handleUserAlreadyExistException(UserAlreadyExistException ex){
+        return ex.getMessage();
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ErrorSendEmailException.class)
+    public String handleErrorSendEmailException(ErrorSendEmailException ex){
         return ex.getMessage();
     }
 }
