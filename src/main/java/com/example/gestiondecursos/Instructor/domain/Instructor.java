@@ -24,5 +24,4 @@ public class Instructor extends User {
 
     @OneToMany(mappedBy = "instructor", cascade = CascadeType.ALL)
     private List<Course> courseList = new ArrayList<>();
-
 }

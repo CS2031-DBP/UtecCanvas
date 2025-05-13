@@ -21,28 +21,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
     private final BaseUserRepository<User> userRepository;
-    private final InstructorRepository instructorRepository;
-    private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
 
-//    public User getByEmail(String username, String role){
-//        User user;
-//        if(role.equals("ROLE_STUDENT")){
-//            user = studentRepository.findByEmail(username).orElseThrow(() -> new ResourceNotFound("Student not found"));
-//        }else{
-//            user = instructorRepository.findByEmail(username).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
-//        }
-//        return user;
-//    }
-public User getByEmail(String email, String role) {
+    public User getByEmail(String email, String role) {
     if (!"ROLE_ADMIN".equals(role)) {
         throw new AccessDeniedException("Only admins are allowed to access this method");
     }
 
     return userRepository.findByEmail(email)
             .orElseThrow(() -> new ResourceNotFound("Admin user not found"));
-}
-
+    }
 
     public UserResponseDTO getMe() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -68,8 +56,6 @@ public User getByEmail(String email, String role) {
 
         return modelMapper.map(user, UserResponseDTO.class);
     }
-
-
     @Bean(name = "UserDetailsService")
     public UserDetailsService userDetailsService(){
         return username -> {
@@ -77,4 +63,7 @@ public User getByEmail(String email, String role) {
             return (UserDetails) user;
         };
     }
+
+
+
 }

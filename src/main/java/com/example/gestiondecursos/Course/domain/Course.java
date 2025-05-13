@@ -1,5 +1,6 @@
 package com.example.gestiondecursos.Course.domain;
 
+import com.example.gestiondecursos.Announcement.domain.Announcement;
 import com.example.gestiondecursos.Enrollment.domain.Enrollment;
 import com.example.gestiondecursos.Evaluation.domain.Evaluation;
 import com.example.gestiondecursos.Instructor.domain.Instructor;
@@ -48,4 +49,7 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
     private List<Evaluation> evaluations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Announcement> announcements = new ArrayList<>();
 }

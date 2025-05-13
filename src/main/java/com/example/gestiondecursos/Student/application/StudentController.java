@@ -60,4 +60,19 @@ public class StudentController {
          studentService.updateStudent(id, student);
          return ResponseEntity.noContent().build();
      }
+
+     @PreAuthorize("hasRole('ADMIN')")
+     @PostMapping
+     public ResponseEntity<StudentResponseDTO> createStudent(@RequestBody Student student){
+        StudentResponseDTO studentResponseDTO = studentService.createStudent(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(studentResponseDTO);
+     }
+
+     @PreAuthorize("hasRole('STUDENT')")
+     @GetMapping("/getMyOwnInfo")
+     public ResponseEntity<StudentResponseDTO> getMy(){
+        StudentResponseDTO studentResponseDTO = studentService.getMyOwnInfo();
+        return ResponseEntity.status(HttpStatus.OK).body(studentResponseDTO);
+     }
+
 }

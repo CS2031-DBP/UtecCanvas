@@ -11,6 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final ModelMapper modelMapper;
     private final AuthorizationUtils authorizationUtils;
+    private final PasswordEncoder passwordEncoder;
 
     public StudentResponseDTO getStudentInfo(Long id){
         Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Student not found"));
@@ -29,7 +31,7 @@ public class StudentService {
         return studentResponseDTO;
     }
 
-    public StudentResponseDTO getStudentOwnInfo() {
+    public StudentResponseDTO getMyOwnInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isStudent = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
@@ -51,7 +53,7 @@ public class StudentService {
         student1.setName(student.getName());
         student1.setLastname(student.getLastname());
         student1.setEmail(student.getEmail());
-        student1.setPassword(student.getPassword());
+        student1.setPassword(passwordEncoder.encode(student.getPassword()));
         student1.setDescription(student.getDescription());
         student1.setProfilePhoto(student.getProfilePhoto());
         student1.setRole(Roles.STUDENT);

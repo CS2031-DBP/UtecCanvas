@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class AuthorizationUtils {
-    private final UserService userService;
 
     public String getCurrentUser(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

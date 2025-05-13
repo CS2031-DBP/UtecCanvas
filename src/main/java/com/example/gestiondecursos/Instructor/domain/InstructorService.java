@@ -4,9 +4,12 @@ import com.example.gestiondecursos.Auth.utils.AuthorizationUtils;
 import com.example.gestiondecursos.Instructor.dto.InstructorResponseDTO;
 import com.example.gestiondecursos.Instructor.infrastructure.InstructorRepository;
 import com.example.gestiondecursos.User.domain.Roles;
+import com.example.gestiondecursos.User.domain.User;
+import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -26,6 +29,26 @@ public class InstructorService {
         Instructor instructor = instructorRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Instructor not found"));;
         InstructorResponseDTO instructorResponseDTO = modelMapper.map(instructor, InstructorResponseDTO.class);
         return instructorResponseDTO;
+    }
+
+    private Instructor byEmail(String email){
+        return instructorRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
+    }
+
+    public Instructor getMe(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new ResourceIsNullException("User not authenticated");
+        }
+        boolean isInstructor = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_INSTRUCTOR"));
+
+        if(!isInstructor) {
+            throw new AccessDeniedException("Only Instructors can access this resource");
+        }
+        String email = ((UserDetails) auth.getPrincipal()).getUsername();
+        Instructor instructor = byEmail(email);
+        return instructor;
     }
 
     public InstructorResponseDTO createInstructor(Instructor instructor){

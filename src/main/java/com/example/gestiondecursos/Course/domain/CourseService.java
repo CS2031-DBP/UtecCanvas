@@ -51,9 +51,6 @@ public class CourseService {
 
     public void updateCourse(Long id, Course course){
         Course course1 = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
-//        course1.setTitle(course.getTitle());
-//        course1.setDescription(course.getDescription());
-//        course1.setSection(course.getSection());
         if(course.getTitle() != null){
             course1.setTitle(course.getTitle());
         }
