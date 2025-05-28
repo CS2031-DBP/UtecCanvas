@@ -1,15 +1,18 @@
 package com.example.gestiondecursos.Instructor.domain;
 
 import com.example.gestiondecursos.Auth.utils.AuthorizationUtils;
+import com.example.gestiondecursos.Instructor.dto.InstructorCreatedDTO;
 import com.example.gestiondecursos.Instructor.dto.InstructorResponseDTO;
 import com.example.gestiondecursos.Instructor.infrastructure.InstructorRepository;
 import com.example.gestiondecursos.User.domain.Roles;
 import com.example.gestiondecursos.User.domain.User;
 import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
+import com.example.gestiondecursos.exceptions.UserAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
@@ -24,6 +27,7 @@ public class InstructorService {
     private final InstructorRepository instructorRepository;
     private final ModelMapper modelMapper;
     private final AuthorizationUtils authorizationUtils;
+    private final PasswordEncoder passwordEncoder;
 
     public InstructorResponseDTO getInstructorInfo(Long id){
         Instructor instructor = instructorRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Instructor not found"));;
@@ -51,14 +55,20 @@ public class InstructorService {
         return instructor;
     }
 
-    public InstructorResponseDTO createInstructor(Instructor instructor){
+    public InstructorResponseDTO createInstructor(InstructorCreatedDTO instructor){
         Instructor instructor1 = new Instructor();
         instructor1.setName(instructor.getName());
         instructor1.setLastname(instructor.getLastname());
-        instructor1.setEmail(instructor.getEmail());
-        instructor1.setPassword(instructor.getPassword());
-        instructor1.setDescription(instructor.getDescription());
-        instructor1.setProfilePhoto(instructor.getProfilePhoto());
+        //instructorRepository.findByEmail(instructor.getEmail()).orElseThrow(() -> new UserAlreadyExistException("Email Already exists"));
+        //Falta logica para evitar crear otro profe
+        if((instructorRepository.findByEmail(instructor.getEmail()).isPresent())){
+            throw new UserAlreadyExistException("Instructor Already exists");
+        }else{
+            instructor1.setEmail(instructor.getEmail());
+        }
+        instructor1.setPassword(passwordEncoder.encode(instructor.getPassword()));
+        //instructor1.setDescription(instructor.getDescription());
+        //instructor1.setProfilePhoto(instructor.getProfilePhoto());
         instructor1.setRole(Roles.INSTRUCTOR);
         instructorRepository.save(instructor1);
         InstructorResponseDTO instructorResponseDTO = modelMapper.map(instructor1, InstructorResponseDTO.class);
@@ -111,13 +121,27 @@ public class InstructorService {
         return instructorResponseDTO;
     }
 
-    public void updateInstructor(Long id, Instructor instructor){
-        Instructor instructor1 = instructorRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
-        if(instructor.getDescription() != null){
-            instructor1.setDescription(instructor.getDescription());
+    public void changeProfilePicture(String photo){
+        Instructor instructor = getMe();
+        if(photo != null){
+            instructor.setProfilePhoto(photo);
         }
-        if(instructor.getProfilePhoto() != null){
-            instructor1.setProfilePhoto(instructor.getProfilePhoto());
+        instructorRepository.save(instructor);
+    }
+
+    public void changeDescription(String description){
+        Instructor instructor = getMe();
+        if(description != null){
+            instructor.setDescription(description);
+        }
+        instructorRepository.save(instructor);
+    }
+
+    public void updateInstructor(Long id, String profilePhoto){ //Admin
+        Instructor instructor1 = instructorRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Instructor not found"));
+
+        if(profilePhoto != null){
+            instructor1.setProfilePhoto(profilePhoto);
         }
         instructorRepository.save(instructor1);
     }

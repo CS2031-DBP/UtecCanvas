@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Table(name = "question_table")
 @Entity
 @NoArgsConstructor
@@ -23,7 +25,18 @@ public class Question{
     @Column(nullable = false)
     private String question;
 
+    @Column(nullable = true)
+    private String correctAnswer;
+
+    @ElementCollection
+    private List<String> options;
+
+    @Enumerated(EnumType.STRING)
+    private QuestionType questionType;
+
+    private Boolean isOpen = false;
+
     @ManyToOne
-    @JoinColumn(name = "quiz_idd")
+    @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 }

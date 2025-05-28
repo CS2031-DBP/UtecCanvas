@@ -3,13 +3,21 @@ package com.example.gestiondecursos.Lesson.domain;
 
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Course.infrastructure.CourseRepository;
+import com.example.gestiondecursos.Enrollment.infrastructure.EnrollmentRepository;
+import com.example.gestiondecursos.Instructor.domain.Instructor;
+import com.example.gestiondecursos.Lesson.dto.LessonRequestDTO;
 import com.example.gestiondecursos.Lesson.dto.LessonResponseDTO;
 import com.example.gestiondecursos.Lesson.infrastructure.LessonRepository;
 import com.example.gestiondecursos.Material.domain.Material;
 import com.example.gestiondecursos.Material.domain.MaterialService;
+import com.example.gestiondecursos.Student.domain.Student;
+import com.example.gestiondecursos.Student.infrastructure.StudentRepository;
+import com.example.gestiondecursos.User.domain.User;
+import com.example.gestiondecursos.User.domain.UserService;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,35 +30,80 @@ public class LessonService {
     private final CourseRepository courseRepository;
     private final MaterialService materialService;
     private final ModelMapper modelMapper;
+    private final EnrollmentRepository enrollmentRepository;
+    private final UserService userService;
+    private final StudentRepository studentRepository;
 
-    public void createLesson(Long id, Lesson lesson){
-        Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
-        Lesson lesson1 = new Lesson();
-        lesson1.setWeek(lesson.getWeek());
-        lesson1.setTitle(lesson.getTitle());
-        lesson1.setCourse(course);
-        //lesson1.setContent(lesson.getContent());
-        lessonRepository.save(lesson1);
+    public void createLesson(Long courseId, LessonRequestDTO lessonRequest) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFound("Course not found"));
+        Lesson lesson = new Lesson();
+        lesson.setWeek(lessonRequest.getWeek());
+        lesson.setTitle(lessonRequest.getTitle());
+        lesson.setCourse(course);
+        lessonRepository.save(lesson);
     }
 
-    public LessonResponseDTO getLessonByTitle(String title){
-        Lesson lesson = lessonRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
-        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
-        lessonResponseDTO.setCourseTitle(lesson.getCourse().getTitle());
-        List<String> materialNames = lesson.getMaterials().stream()
-                .map(Material::getTitle).collect(Collectors.toList());
-        lessonResponseDTO.setMaterialTitles(materialNames);
-        return lessonResponseDTO;
+
+    public LessonResponseDTO getLessonByTitle(Long courseId,String title){
+        User user = userService.getAuthenticatedUser();
+        if(user instanceof Student){
+            boolean enrolled = enrollmentRepository.existsByStudentIdAndCourseId(user.getId(), courseId);
+            if(!enrolled){
+                throw new AccessDeniedException("Student not enrolled in this course");
+            }
+        }
+        if(user instanceof Instructor){
+            boolean enrolled = courseRepository.existsByIdAndInstructorId(courseId, user.getId());
+            if(!enrolled){
+                throw new AccessDeniedException("Instructor not enrolled in this course");
+            }
+        }
+//        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFound("Course not found"));
+//        Lesson lesson = lessonRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
+//        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
+//        lessonResponseDTO.setCourseTitle(course.getTitle());
+//        List<String> materialNames = lesson.getMaterials().stream()
+//                .map(Material::getTitle).collect(Collectors.toList());
+//        lessonResponseDTO.setMaterialTitles(materialNames);
+//        return lessonResponseDTO;
+        Lesson lesson = lessonRepository.findByCourseIdAndTitle(courseId, title)
+                .orElseThrow(() -> new ResourceNotFound("Lesson not found"));
+
+        LessonResponseDTO dto = modelMapper.map(lesson, LessonResponseDTO.class);
+        dto.setCourseTitle(lesson.getCourse().getTitle());
+        dto.setMaterialTitles(lesson.getMaterials().stream().map(Material::getTitle).toList());
+        return dto;
     }
 
-    public LessonResponseDTO getLessonByWeek(Integer week){
-        Lesson lesson = lessonRepository.findByWeek(week).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
-        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
-        lessonResponseDTO.setCourseTitle(lesson.getCourse().getTitle());
-        List<String> materialNames = lesson.getMaterials().stream()
-                .map(Material::getTitle).collect(Collectors.toList());
-        lessonResponseDTO.setMaterialTitles(materialNames);
-        return lessonResponseDTO;
+    public LessonResponseDTO getLessonByWeek(Long courseId, Integer week){
+        User user = userService.getAuthenticatedUser();
+        if(user instanceof Student){
+            boolean enrolled = enrollmentRepository.existsByStudentIdAndCourseId(user.getId(), courseId);
+            if(!enrolled){
+                throw new AccessDeniedException("Student not enrolled in this course");
+            }
+        }
+        if(user instanceof Instructor){
+            boolean enrolled = courseRepository.existsByIdAndInstructorId(courseId, user.getId());
+            if(!enrolled){
+                throw new AccessDeniedException("Instructor not enrolled in this course");
+            }
+        }
+//        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFound("Course not found"));
+//        Lesson lesson = lessonRepository.findByWeek(week).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
+//        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
+//        //lessonResponseDTO.setCourseTitle(lesson.getCourse().getTitle());
+//        List<String> materialNames = lesson.getMaterials().stream()
+//                .map(Material::getTitle).collect(Collectors.toList());
+//        lessonResponseDTO.setMaterialTitles(materialNames);
+//        return lessonResponseDTO;
+        Lesson lesson = lessonRepository.findByCourseIdAndWeek(courseId, week)
+                .orElseThrow(() -> new ResourceNotFound("Lesson not found"));
+
+        LessonResponseDTO dto = modelMapper.map(lesson, LessonResponseDTO.class);
+        dto.setCourseTitle(lesson.getCourse().getTitle());
+        dto.setMaterialTitles(lesson.getMaterials().stream().map(Material::getTitle).toList());
+        return dto;
     }
 
     public void deleteLesson(Long id){
@@ -58,7 +111,7 @@ public class LessonService {
         lessonRepository.delete(lesson);
     }
 
-    public void updateLesson(Long id, Lesson lesson){
+    public void updateLesson(Long id, LessonRequestDTO lesson){
         Lesson lesson1 = lessonRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
         if(lesson.getTitle() != null) {
             lesson1.setTitle(lesson.getTitle());

@@ -4,6 +4,7 @@ import com.example.gestiondecursos.Auth.domain.AuthService;
 import com.example.gestiondecursos.Auth.dto.JwtAuthResponse;
 import com.example.gestiondecursos.Auth.dto.LoginDTO;
 import com.example.gestiondecursos.Auth.dto.RegisterDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,12 +19,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginDTO loginDTO){
+    public ResponseEntity<JwtAuthResponse> login(@Valid  @RequestBody LoginDTO loginDTO){
         return ResponseEntity.ok(authService.login(loginDTO));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<JwtAuthResponse> register(@RequestBody RegisterDTO registerDTO){
+    public ResponseEntity<JwtAuthResponse> register(@Valid @RequestBody RegisterDTO registerDTO){
         return ResponseEntity.ok(authService.register(registerDTO));
     }
 }

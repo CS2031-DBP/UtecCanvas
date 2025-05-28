@@ -4,6 +4,7 @@ import com.example.gestiondecursos.Assignment.Dto.AssignmentRequestDTO;
 import com.example.gestiondecursos.Assignment.Dto.AssignmentResponseDTO;
 import com.example.gestiondecursos.Assignment.domain.Assignment;
 import com.example.gestiondecursos.Assignment.domain.AssignmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
@@ -19,14 +20,14 @@ public class AssignmentController {
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/courseId/{id}")
-    public ResponseEntity<AssignmentResponseDTO> createAssignment(@PathVariable Long id, @RequestBody AssignmentRequestDTO assignment){
+    public ResponseEntity<AssignmentResponseDTO> createAssignment(@PathVariable Long id,@RequestBody @Valid AssignmentRequestDTO assignment){
         AssignmentResponseDTO assignment1 = assignmentService.createAssignment(id, assignment);
         return ResponseEntity.status(HttpStatus.CREATED).body(assignment1);
     }
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @PatchMapping("/assignmentId/{id}")
-    public ResponseEntity<Void> updateAssignment(@PathVariable Long id, @RequestBody AssignmentRequestDTO assignment){
+    public ResponseEntity<Void> updateAssignment(@PathVariable Long id,@RequestBody @Valid AssignmentRequestDTO assignment){
         assignmentService.updateAssignment(id, assignment);
         return ResponseEntity.noContent().build();
     }

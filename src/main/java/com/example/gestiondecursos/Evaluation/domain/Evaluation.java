@@ -23,10 +23,10 @@ public class Evaluation {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String title;
 
-    private Integer maxScore;
+    private Double maxScore;
 
     private String instructions;
 
@@ -36,5 +36,9 @@ public class Evaluation {
 
     @ManyToOne
     @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
+
+    @ManyToOne
+    @JoinColumn(name = "course_id")
     private Course course;
 }

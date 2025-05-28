@@ -27,5 +27,4 @@ public class Material {
     @ManyToOne
     @JoinColumn(name = "lesson_id")
     private Lesson lesson;
-
 }

@@ -29,6 +29,8 @@ public class Lesson {
     @Column(nullable = false)
     private Integer week;
 
+    //private String courseTitle;
+
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL)
     private List<Material> materials;
 
@@ -36,6 +38,6 @@ public class Lesson {
     @JoinColumn(name = "course_id")
     private Course course;
 
-//    @OneToMany(mappedBy = "lesson")
-//    private List<Evaluation> evaluations = new ArrayList<>();
+    @OneToMany(mappedBy = "lesson")
+    private List<Evaluation> evaluations = new ArrayList<>();
 }

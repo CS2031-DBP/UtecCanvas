@@ -1,6 +1,7 @@
 package com.example.gestiondecursos.Course.domain;
 
 import com.example.gestiondecursos.Course.dto.CourseRequestDTO;
+import com.example.gestiondecursos.Course.dto.CourseRequestForUpdateDTO;
 import com.example.gestiondecursos.Course.dto.CourseResponseDTO;
 import com.example.gestiondecursos.Course.infrastructure.CourseRepository;
 import com.example.gestiondecursos.Instructor.domain.Instructor;
@@ -40,7 +41,7 @@ public class CourseService {
         return courseResponseDTO;
     }
 
-    public void createCourse(Course course){
+    public void createCourse(CourseRequestDTO course){
         Course newCourse = new Course();
         newCourse.setTitle(course.getTitle());
         newCourse.setDescription(course.getDescription());
@@ -49,7 +50,7 @@ public class CourseService {
         courseRepository.save(newCourse);
     }
 
-    public void updateCourse(Long id, Course course){
+    public void updateCourse(Long id, CourseRequestForUpdateDTO course){
         Course course1 = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Course not found"));
         if(course.getTitle() != null){
             course1.setTitle(course.getTitle());

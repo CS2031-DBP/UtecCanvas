@@ -2,7 +2,9 @@ package com.example.gestiondecursos.Lesson.application;
 
 import com.example.gestiondecursos.Lesson.domain.Lesson;
 import com.example.gestiondecursos.Lesson.domain.LessonService;
+import com.example.gestiondecursos.Lesson.dto.LessonRequestDTO;
 import com.example.gestiondecursos.Lesson.dto.LessonResponseDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,22 +19,22 @@ public class LessonController {
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/courseId/{id}")
-    public ResponseEntity<Void> createdLesson(@PathVariable Long id, @RequestBody Lesson lesson){
+    public ResponseEntity<Void> createdLesson(@PathVariable Long id,@RequestBody @Valid LessonRequestDTO lesson){
         lessonService.createLesson(id, lesson);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/title/{title}")
-    public ResponseEntity<LessonResponseDTO> getLessonByTitle(@PathVariable String title){
-        LessonResponseDTO lesson = lessonService.getLessonByTitle(title);
+    @GetMapping("/courseId/{courseId}/title/{title}")
+    public ResponseEntity<LessonResponseDTO> getLessonByTitle(@PathVariable Long courseId,@PathVariable String title){
+        LessonResponseDTO lesson = lessonService.getLessonByTitle(courseId, title);
         return ResponseEntity.status(HttpStatus.OK).body(lesson);
     }
 
     @PreAuthorize("hasRole('STUDENT')")
-    @GetMapping("/getByWeek/{week}")
-    public ResponseEntity<LessonResponseDTO> getLessonByWeek(@PathVariable Integer week){
-        LessonResponseDTO lesson = lessonService.getLessonByWeek(week);
+    @GetMapping("/courseId/{courseId}/getByWeek/{week}")
+    public ResponseEntity<LessonResponseDTO> getLessonByWeek(@PathVariable Long courseId,@PathVariable Integer week){
+        LessonResponseDTO lesson = lessonService.getLessonByWeek(courseId, week);
         return ResponseEntity.status(HttpStatus.OK).body(lesson);
     }
 
@@ -45,7 +47,7 @@ public class LessonController {
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @PatchMapping("/lessonId/{id}")
-    public ResponseEntity<Void> updateLesson(@PathVariable Long id, @RequestBody Lesson lesson){
+    public ResponseEntity<Void> updateLesson(@PathVariable Long id, @RequestBody @Valid LessonRequestDTO lesson){
         lessonService.updateLesson(id, lesson);
         return ResponseEntity.noContent().build();
     }

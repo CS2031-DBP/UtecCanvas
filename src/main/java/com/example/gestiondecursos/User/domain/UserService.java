@@ -24,12 +24,11 @@ public class UserService {
     private final ModelMapper modelMapper;
 
     public User getByEmail(String email, String role) {
-    if (!"ROLE_ADMIN".equals(role)) {
+        if (!"ROLE_ADMIN".equals(role)) {
         throw new AccessDeniedException("Only admins are allowed to access this method");
-    }
-
+        }
     return userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResourceNotFound("Admin user not found"));
+            .orElseThrow(() -> new ResourceNotFound("User not found"));
     }
 
     public UserResponseDTO getMe() {
@@ -56,6 +55,13 @@ public class UserService {
 
         return modelMapper.map(user, UserResponseDTO.class);
     }
+
+    public User getAuthenticatedUser(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
+        return userRepository.findByEmail(username).orElseThrow(() -> new ResourceNotFound("User not found"));
+    }
+
     @Bean(name = "UserDetailsService")
     public UserDetailsService userDetailsService(){
         return username -> {
@@ -63,7 +69,4 @@ public class UserService {
             return (UserDetails) user;
         };
     }
-
-
-
 }

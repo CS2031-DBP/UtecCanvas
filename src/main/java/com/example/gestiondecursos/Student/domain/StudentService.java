@@ -1,11 +1,15 @@
 package com.example.gestiondecursos.Student.domain;
 
 import com.example.gestiondecursos.Auth.utils.AuthorizationUtils;
+import com.example.gestiondecursos.Student.Dto.StudentCreateDTO;
+import com.example.gestiondecursos.Student.Dto.StudentRequestDTO;
 import com.example.gestiondecursos.Student.Dto.StudentResponseDTO;
+import com.example.gestiondecursos.Student.Dto.StudentResponseForMeDTO;
 import com.example.gestiondecursos.Student.infrastructure.StudentRepository;
 import com.example.gestiondecursos.User.domain.Roles;
 import com.example.gestiondecursos.exceptions.ResourceIsNullException;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
+import com.example.gestiondecursos.exceptions.UserAlreadyExistException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,13 +29,13 @@ public class StudentService {
     private final AuthorizationUtils authorizationUtils;
     private final PasswordEncoder passwordEncoder;
 
-    public StudentResponseDTO getStudentInfo(Long id){
+    public StudentResponseForMeDTO getStudentInfo(Long id){
         Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Student not found"));
-        StudentResponseDTO studentResponseDTO = modelMapper.map(student, StudentResponseDTO.class);
+        StudentResponseForMeDTO studentResponseDTO = modelMapper.map(student, StudentResponseForMeDTO.class);
         return studentResponseDTO;
     }
 
-    public StudentResponseDTO getMyOwnInfo() {
+    public StudentResponseForMeDTO getMyOwnInfo() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean isStudent = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_STUDENT"));
@@ -48,14 +52,18 @@ public class StudentService {
     }
 
 
-    public StudentResponseDTO createStudent(Student student){
+    public StudentResponseDTO createStudent(StudentCreateDTO student){
         Student student1 = new Student();
         student1.setName(student.getName());
         student1.setLastname(student.getLastname());
-        student1.setEmail(student.getEmail());
+        if(studentRepository.findByEmail(student.getEmail()).isPresent()){
+            throw new UserAlreadyExistException("Student already exists");
+        }else{
+            student1.setEmail(student.getEmail());
+        }
         student1.setPassword(passwordEncoder.encode(student.getPassword()));
-        student1.setDescription(student.getDescription());
-        student1.setProfilePhoto(student.getProfilePhoto());
+        //student1.setDescription(student.getDescription());
+        //student1.setProfilePhoto(student.getProfilePhoto());
         student1.setRole(Roles.STUDENT);
         studentRepository.save(student1);
         StudentResponseDTO studentResponseDTO = modelMapper.map(student1, StudentResponseDTO.class);
@@ -90,15 +98,43 @@ public class StudentService {
         Student student = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Student not found"));
         studentRepository.delete(student);
     }
+    public void changeDescription(String description){
+        StudentResponseForMeDTO studentResponseDTO = getMyOwnInfo();
+        studentResponseDTO.setDescription(description);
+        studentRepository.save(modelMapper.map(studentResponseDTO, Student.class));
+    }
 
-    public void updateStudent(Long id, Student student){
-        Student updatedStudent = studentRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Student not found"));
-        if(student.getDescription() != null){
-            updatedStudent.setDescription(student.getDescription());
+    public void changeProfilePicture(String profilePicture){
+        StudentResponseForMeDTO studentResponseDTO = getMyOwnInfo();
+        if(profilePicture != null){
+            studentResponseDTO.setProfilePhoto(profilePicture);
         }
-        if(student.getProfilePhoto() != null){
-            updatedStudent.setProfilePhoto(student.getProfilePhoto());
+        studentRepository.save(modelMapper.map(studentResponseDTO, Student.class));
+    }
+
+    public StudentResponseDTO updateStudent(String email, StudentRequestDTO student){ //Para Admins
+        Student updatedStudent = studentRepository.findByEmail(email).orElseThrow(() -> new ResourceNotFound("Student not found"));
+//        if(student.getDescription() != null){
+//            updatedStudent.setDescription(student.getDescription());
+//        }
+//        if(student.getProfilePhoto() != null){
+//            updatedStudent.setProfilePhoto(student.getProfilePhoto());
+//        }
+        if(student.getName() != null){
+            updatedStudent.setName(student.getName());
+        }
+        if(student.getLastname() != null){
+            updatedStudent.setLastname(student.getLastname());
         }
         studentRepository.save(updatedStudent);
+        StudentResponseDTO responseDTO = modelMapper.map(updatedStudent, StudentResponseDTO.class);
+        return responseDTO;
     }
+    public List<StudentResponseDTO> getAllStudents() {
+        List<Student> students = studentRepository.findAll();
+        return students.stream()
+                .map(student -> modelMapper.map(student, StudentResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
 }

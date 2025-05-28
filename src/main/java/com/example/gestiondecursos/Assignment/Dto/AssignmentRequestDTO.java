@@ -1,13 +1,17 @@
 package com.example.gestiondecursos.Assignment.Dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
 public class AssignmentRequestDTO {
+    @NotNull
     private String title;
-    private Integer maxScore;
+    @NotNull
+    private Double maxScore;
+    @NotNull
     private String instructions;
     private LocalDateTime dueDate;
     private String material;

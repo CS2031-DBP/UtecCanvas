@@ -1,6 +1,7 @@
 package com.example.gestiondecursos.Email;
 
 import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -11,6 +12,7 @@ import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +56,42 @@ public class EmailService {
         helper.setSubject("Bienvenido a UTEC++");
         javaMailSender.send(message);
     }
+
+    @Async
+    public void announcementCreated(List<String> to, String name, String lastname, String courseTitle, String subject) {
+        for (String recipient : to) {
+            try {
+                sendEmailToDifferentUsers(recipient, name, lastname, courseTitle, subject);
+            } catch (MessagingException e) {
+                //System.err.println("Error al enviar correo a: " + recipient);
+                //e.printStackTrace();
+                throw new RuntimeException("Error sending emails");
+            }
+        }
+    }
+
+
+
+    public void sendEmailToDifferentUsers(String to, String name, String lastname, String courseTitle, String subject) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        try {
+            Context context = new Context();
+            context.setVariable("name", name);
+            context.setVariable("lastname", lastname);
+            context.setVariable("courseTitle", courseTitle);
+            context.setVariable("subject", subject);
+
+            String process = templateEngine.process("announcement-template", context);
+
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject("Nuevo anuncio en el curso " + courseTitle);
+            helper.setText(process, true);
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new MessagingException("Error sending email to: " + to, e);
+        }
+    }
+
 
 }

@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Table(name = "Users")
+@Table(name = "users_table")
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,11 +21,13 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    //@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // , generator = "user_seq"
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "user_name")
     private String name;
+
 
     @Column(nullable = false)
     private String lastname;

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo anuncio en tu curso</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            color: #2a4365;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 class="title">Nuevo anuncio en el curso [[${courseTitle}]]</h2>
+    <p>Hola estudiante,</p>
+    <p>Tu instructor <strong th:text="${name} + ' ' + ${lastname}"></strong> ha publicado un nuevo anuncio.</p>
+
+    <p><strong>Mensaje del anuncio:</strong></p>
+    <blockquote th:text="${subject}" style="background: #f0f0f0; padding: 10px; border-left: 4px solid #2a4365;"></blockquote>
+
+    <p>Por favor, revisa la plataforma para más detalles o materiales relacionados.</p>
+
+    <div class="footer">
+        <p>Este es un mensaje automático. No respondas a este correo.</p>
+    </div>
+</div>
+</body>
+</html>

@@ -19,13 +19,11 @@ import java.util.List;
 @Table(name = "Quiz_table")
 public class Quiz extends Evaluation {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+//    private Long id;
 
-    @Column(nullable = false)
-    private String title;
-
-    @OneToMany(mappedBy = "quiz")
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Question> questions = new ArrayList<>();
+
 }

@@ -28,9 +28,7 @@ public class Announcement {
     private String instructorLastname;
 
     private LocalDateTime createdAt;
-
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
-
 }

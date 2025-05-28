@@ -2,7 +2,10 @@ package com.example.gestiondecursos.Course.application;
 
 import com.example.gestiondecursos.Course.domain.Course;
 import com.example.gestiondecursos.Course.domain.CourseService;
+import com.example.gestiondecursos.Course.dto.CourseRequestDTO;
+import com.example.gestiondecursos.Course.dto.CourseRequestForUpdateDTO;
 import com.example.gestiondecursos.Course.dto.CourseResponseDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +29,14 @@ public class CourseController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
-    public ResponseEntity<Void> createCourse(@RequestBody Course course){
+    public ResponseEntity<Void> createCourse(@RequestBody @Valid CourseRequestDTO course){
         courseService.createCourse(course);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/courseId/{id}")
-    public ResponseEntity<Void> updateCourse(@PathVariable Long id, @RequestBody Course course){
+    public ResponseEntity<Void> updateCourse(@PathVariable Long id, @RequestBody @Valid CourseRequestForUpdateDTO course){
         courseService.updateCourse(id, course);
         return ResponseEntity.noContent().build();
     }
