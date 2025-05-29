@@ -30,8 +30,8 @@ public class EnrollmentController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/courseId/{courseId}/studentEmail/{email}")
-    public ResponseEntity<Void> removeEnrollment(@PathVariable Long id, @PathVariable String email){
-        enrollmentService.removeEnrollment(id, email);
+    public ResponseEntity<Void> removeEnrollment(@PathVariable Long courseId, @PathVariable String email){
+        enrollmentService.removeEnrollment(courseId, email);
         return ResponseEntity.noContent().build();
     }
 }

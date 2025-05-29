@@ -1,4 +1,4 @@
-package com.example.gestiondecursos.Auth.application;
+package com.example.gestiondecursos.Auth.app;
 
 import com.example.gestiondecursos.Auth.domain.AuthService;
 import com.example.gestiondecursos.Auth.dto.JwtAuthResponse;
@@ -19,7 +19,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> login(@Valid  @RequestBody LoginDTO loginDTO){
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody @Valid LoginDTO loginDTO){
         return ResponseEntity.ok(authService.login(loginDTO));
     }
 

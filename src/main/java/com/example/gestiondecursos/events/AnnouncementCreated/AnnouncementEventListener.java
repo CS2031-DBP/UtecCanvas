@@ -16,12 +16,11 @@ public class AnnouncementEventListener {
     public void handleAnnouncementCreated(AnnouncementCreatedEvent event) {
         emailService.announcementCreated(
                 event.getRecipients(),
-                event.getName(),
-                event.getLastname(),
+                event.getInstructorName(),
+                event.getInstructorLastname(),
                 event.getCourseTitle(),
-                event.getSubject()
+                event.getAnnouncementTitle(),
+                event.getAnnouncementMessage()
         );
     }
-
-
 }

@@ -38,4 +38,10 @@ public class GlobalExceptionHandler {
     public String handleErrorSendEmailException(ErrorSendEmailException ex){
         return ex.getMessage();
     }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(UnauthorizedException.class)
+    public String handleUnauthorizedException(UnauthorizedException ex){
+        return ex.getMessage();
+    }
 }

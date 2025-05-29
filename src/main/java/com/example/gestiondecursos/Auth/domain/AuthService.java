@@ -48,34 +48,34 @@ public class AuthService {
         if (userRepository.findByEmail(registerDTO.getEmail()).isPresent()) {
             throw new UserAlreadyExistException("Email already registered");
         }
-
-        if(registerDTO.getRole() == "INSTRUCTOR"){
-            Instructor instructor = new Instructor();
-            instructor.setName(registerDTO.getName());
-            instructor.setLastname(registerDTO.getLastname());
-            instructor.setEmail(registerDTO.getEmail());
-            instructor.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-            instructor.setRole(INSTRUCTOR);
-            userRepository.save(instructor);
-            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
-            JwtAuthResponse response = new JwtAuthResponse();
-            response.setToken(jwtService.generatedToken(instructor));
-            return response;
-        }
-        else if (registerDTO.getRole() == "STUDENT") {
-            Student student = new Student();
-            student.setName(registerDTO.getName());
-            student.setLastname(registerDTO.getLastname());
-            student.setEmail(registerDTO.getEmail());
-            student.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-            student.setRole(STUDENT);
-            userRepository.save(student);
-            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
-            JwtAuthResponse response = new JwtAuthResponse();
-            response.setToken(jwtService.generatedToken(student));
-            return response;
-        }
-        else{
+//
+//        if(registerDTO.getRole() == "INSTRUCTOR"){
+//            Instructor instructor = new Instructor();
+//            instructor.setName(registerDTO.getName());
+//            instructor.setLastname(registerDTO.getLastname());
+//            instructor.setEmail(registerDTO.getEmail());
+//            instructor.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+//            instructor.setRole(INSTRUCTOR);
+//            userRepository.save(instructor);
+//            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
+//            JwtAuthResponse response = new JwtAuthResponse();
+//            response.setToken(jwtService.generatedToken(instructor));
+//            return response;
+//        }
+//        else if (registerDTO.getRole() == "STUDENT") {
+//            Student student = new Student();
+//            student.setName(registerDTO.getName());
+//            student.setLastname(registerDTO.getLastname());
+//            student.setEmail(registerDTO.getEmail());
+//            student.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
+//            student.setRole(STUDENT);
+//            userRepository.save(student);
+//            applicationEventPublisher.publishEvent(new UserRegisterEvent(this, registerDTO.getName(), registerDTO.getLastname(), registerDTO.getEmail(), registerDTO.getPassword()));
+//            JwtAuthResponse response = new JwtAuthResponse();
+//            response.setToken(jwtService.generatedToken(student));
+//            return response;
+//        }
+//        else{
             User user1 = new User();
             user1.setName(registerDTO.getName());
             user1.setLastname(registerDTO.getLastname());
@@ -87,6 +87,6 @@ public class AuthService {
             JwtAuthResponse response = new JwtAuthResponse();
             response.setToken(jwtService.generatedToken(user1));
             return response;
-        }
+        //}
     }
 }

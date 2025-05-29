@@ -2,6 +2,7 @@ package com.example.gestiondecursos.Announcement.application;
 
 import com.example.gestiondecursos.Announcement.domain.Announcement;
 import com.example.gestiondecursos.Announcement.domain.AnnouncementService;
+import com.example.gestiondecursos.Announcement.dto.AnnouncementRequestDTO;
 import com.example.gestiondecursos.Announcement.dto.AnnouncementResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ public class AnnouncementController {
 
     @PreAuthorize("hasRole('INSTRUCTOR')")
     @PostMapping("/course/{courseId}")
-    public ResponseEntity<AnnouncementResponseDTO> createAnnouncement(@PathVariable Long courseId, @RequestBody Announcement announcementRequest) {
+    public ResponseEntity<AnnouncementResponseDTO> createAnnouncement(@PathVariable Long courseId, @RequestBody AnnouncementRequestDTO announcementRequest) {
         AnnouncementResponseDTO response = announcementService.createAnnouncement(announcementRequest, courseId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

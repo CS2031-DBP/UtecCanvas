@@ -58,40 +58,57 @@ public class EmailService {
     }
 
     @Async
-    public void announcementCreated(List<String> to, String name, String lastname, String courseTitle, String subject) {
+    public void announcementCreated(
+            List<String> to,
+            String instructorName,
+            String instructorLastname,
+            String courseTitle,
+            String announcementTitle,
+            String announcementMessage) {
+
         for (String recipient : to) {
             try {
-                sendEmailToDifferentUsers(recipient, name, lastname, courseTitle, subject);
+                sendAnnouncementEmail(
+                        recipient,
+                        instructorName,
+                        instructorLastname,
+                        courseTitle,
+                        announcementTitle,
+                        announcementMessage
+                );
             } catch (MessagingException e) {
-                //System.err.println("Error al enviar correo a: " + recipient);
-                //e.printStackTrace();
-                throw new RuntimeException("Error sending emails");
+                throw new RuntimeException("Error sending email to: " + recipient, e);
             }
         }
     }
 
+    public void sendAnnouncementEmail(
+            String to,
+            String instructorName,
+            String instructorLastname,
+            String courseTitle,
+            String announcementTitle,
+            String announcementMessage) throws MessagingException {
 
-
-    public void sendEmailToDifferentUsers(String to, String name, String lastname, String courseTitle, String subject) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
-        try {
-            Context context = new Context();
-            context.setVariable("name", name);
-            context.setVariable("lastname", lastname);
-            context.setVariable("courseTitle", courseTitle);
-            context.setVariable("subject", subject);
+        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            String process = templateEngine.process("announcement-template", context);
+        Context context = new Context();
+        context.setVariable("instructorName", instructorName);
+        context.setVariable("instructorLastname", instructorLastname);
+        context.setVariable("courseTitle", courseTitle);
+        context.setVariable("announcementTitle", announcementTitle);
+        context.setVariable("announcementMessage", announcementMessage);
 
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-            helper.setTo(to);
-            helper.setSubject("Nuevo anuncio en el curso " + courseTitle);
-            helper.setText(process, true);
-            javaMailSender.send(message);
-        } catch (MessagingException e) {
-            throw new MessagingException("Error sending email to: " + to, e);
-        }
+        String html = templateEngine.process("announcement-template", context);
+
+        helper.setTo(to);
+        helper.setSubject("Nuevo anuncio: " + announcementTitle);
+        helper.setText(html, true);
+
+        javaMailSender.send(message);
     }
+
 
 
 }

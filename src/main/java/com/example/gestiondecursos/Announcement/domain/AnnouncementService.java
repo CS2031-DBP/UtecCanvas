@@ -1,5 +1,6 @@
 package com.example.gestiondecursos.Announcement.domain;
 
+import com.example.gestiondecursos.Announcement.dto.AnnouncementRequestDTO;
 import com.example.gestiondecursos.Announcement.dto.AnnouncementResponseDTO;
 import com.example.gestiondecursos.Announcement.infrastructure.AnnouncementRepository;
 import com.example.gestiondecursos.Course.domain.Course;
@@ -11,6 +12,7 @@ import com.example.gestiondecursos.User.domain.User;
 import com.example.gestiondecursos.User.domain.UserService;
 import com.example.gestiondecursos.events.AnnouncementCreated.AnnouncementCreatedEvent;
 import com.example.gestiondecursos.exceptions.ResourceNotFound;
+import com.example.gestiondecursos.exceptions.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,14 +32,19 @@ public class AnnouncementService {
     private final AnnouncementRepository announcementRepository;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public AnnouncementResponseDTO createAnnouncement(Announcement announcementRequest, Long courseId) {
+    public AnnouncementResponseDTO createAnnouncement(AnnouncementRequestDTO dto, Long courseId) {
         Instructor instructor = instructorService.getMe();
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFound("Course not found"));
 
+        if (!course.getInstructor().getId().equals(instructor.getId())) {
+            throw new UnauthorizedException("You are not authorized to post announcements for this course.");
+        }
+
         Announcement announcement = new Announcement();
-        announcement.setTitle(announcementRequest.getTitle());
-        announcement.setMessage(announcementRequest.getMessage());
+        announcement.setTitle(dto.getTitle().trim());
+        announcement.setMessage(dto.getMessage().trim());
         announcement.setInstructorName(instructor.getName());
         announcement.setInstructorLastname(instructor.getLastname());
         announcement.setCourse(course);
@@ -47,17 +54,17 @@ public class AnnouncementService {
 
         List<String> studentEmails = getAllEmailsByCourse(course);
 
-//        applicationEventPublisher.publishEvent(
-//                new AnnouncementCreatedEvent(
-//                        this,
-//                        studentEmails,
-//                        instructor.getName(),
-//                        instructor.getLastname(),
-//                        courseId,
-//                        course.getTitle(),
-//                        announcement.getMessage()
-//                )
-//        );
+        applicationEventPublisher.publishEvent(
+                new AnnouncementCreatedEvent(
+                        this,
+                        studentEmails,
+                        instructor.getName(),
+                        instructor.getLastname(),
+                        course.getTitle(),
+                        announcement.getTitle(),
+                        announcement.getMessage()
+                )
+        );
 
 
         return modelMapper.map(saved, AnnouncementResponseDTO.class);

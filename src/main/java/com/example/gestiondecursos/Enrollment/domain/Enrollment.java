@@ -32,6 +32,4 @@ public class Enrollment {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
-
-
 }

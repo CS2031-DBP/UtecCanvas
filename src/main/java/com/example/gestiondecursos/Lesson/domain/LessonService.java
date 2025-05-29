@@ -58,14 +58,6 @@ public class LessonService {
                 throw new AccessDeniedException("Instructor not enrolled in this course");
             }
         }
-//        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFound("Course not found"));
-//        Lesson lesson = lessonRepository.findByTitle(title).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
-//        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
-//        lessonResponseDTO.setCourseTitle(course.getTitle());
-//        List<String> materialNames = lesson.getMaterials().stream()
-//                .map(Material::getTitle).collect(Collectors.toList());
-//        lessonResponseDTO.setMaterialTitles(materialNames);
-//        return lessonResponseDTO;
         Lesson lesson = lessonRepository.findByCourseIdAndTitle(courseId, title)
                 .orElseThrow(() -> new ResourceNotFound("Lesson not found"));
 
@@ -89,14 +81,6 @@ public class LessonService {
                 throw new AccessDeniedException("Instructor not enrolled in this course");
             }
         }
-//        Course course = courseRepository.findById(courseId).orElseThrow(() -> new ResourceNotFound("Course not found"));
-//        Lesson lesson = lessonRepository.findByWeek(week).orElseThrow(() -> new ResourceNotFound("Lesson not found"));
-//        LessonResponseDTO lessonResponseDTO = modelMapper.map(lesson, LessonResponseDTO.class);
-//        //lessonResponseDTO.setCourseTitle(lesson.getCourse().getTitle());
-//        List<String> materialNames = lesson.getMaterials().stream()
-//                .map(Material::getTitle).collect(Collectors.toList());
-//        lessonResponseDTO.setMaterialTitles(materialNames);
-//        return lessonResponseDTO;
         Lesson lesson = lessonRepository.findByCourseIdAndWeek(courseId, week)
                 .orElseThrow(() -> new ResourceNotFound("Lesson not found"));
 
@@ -118,11 +102,4 @@ public class LessonService {
         }
         lessonRepository.save(lesson1);
     }
-//    public void assignMaterial(Integer week, Material material){
-//        Lesson lesson = getLessonByWeek(week);
-//        Material material1 = materialService.createMaterial(material);
-//        material1.setLesson(lesson);
-//        lesson.getMaterials().add(material1);
-//        lessonRepository.save(lesson);
-//    }
 }

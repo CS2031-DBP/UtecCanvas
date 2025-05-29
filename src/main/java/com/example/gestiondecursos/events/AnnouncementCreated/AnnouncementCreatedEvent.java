@@ -8,20 +8,27 @@ import java.util.List;
 @Getter
 public class AnnouncementCreatedEvent extends ApplicationEvent {
     private final List<String> recipients;
-    private final String name;
-    private final String lastname;
-    private final Long courseId;
-    private final String courseTitle; // <-- Nuevo campo
-    private final String subject;
+    private final String instructorName;
+    private final String instructorLastname;
+    private final String courseTitle;
+    private final String announcementTitle;
+    private final String announcementMessage;
 
-    public AnnouncementCreatedEvent(Object source, List<String> recipients, String name, String lastname, Long courseId, String courseTitle, String subject) {
-        super(subject);
+    public AnnouncementCreatedEvent(
+            Object source,
+            List<String> recipients,
+            String instructorName,
+            String instructorLastname,
+            String courseTitle,
+            String announcementTitle,
+            String announcementMessage) {
+        super(source);
         this.recipients = recipients;
-        this.name = name;
-        this.lastname = lastname;
-        this.courseId = courseId;
+        this.instructorName = instructorName;
+        this.instructorLastname = instructorLastname;
         this.courseTitle = courseTitle;
-        this.subject = subject;
+        this.announcementTitle = announcementTitle;
+        this.announcementMessage = announcementMessage;
     }
 }
 
