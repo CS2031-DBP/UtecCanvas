@@ -15,7 +15,21 @@
     - [Funcionalidades Implementadas](#funcionalidades-implementadas)
     - [Tecnologías Utilizadas](#tecnologías-utilizadas)
 4. [Modelo de Entidades](#modelo-de-entidades)
-    - [Descripción de Entidades](#descripción-de-entidades)
+    - [Descripción de Entidades](#entidades-principales)
+5. [Testing y Manejo de Errores](#testing-y-manejo-de-errores)
+6. [Medidas de Seguridad Implementadas](#medidas-de-seguridad-implementadas)
+    - [Seguridad de Datos](#seguridad-de-datos)
+    - [Prevención de Vulnerabilidades](#prevención-de-vulnerabilidades)
+7. [Eventos y Asincronía](#eventos-y-asincronía)
+    - [Eventos Utilizados](#eventos-utilizados)
+    - [Asincronía](#asincronía)
+    - [Servicio de Email](#servicio-de-email)
+8. [Conclusión](#conclusión)
+    - [Logros del Proyecto](#logros-del-proyecto)
+    - [Aprendizajes Clave](#aprendizajes-clave)
+    - [Trabajo Futuro](#trabajo-futuro)
+9. [Colección de Postman para Pruebas](#colección-de-postman-para-pruebas)
+10. [Apéndices](#apéndices)
 
 ---
 
