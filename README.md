@@ -240,6 +240,15 @@ Para continuar mejorando el proyecto, se sugiere:
 - Integrar servicios externos para mejorar la entrega de notificaciones y la experiencia del usuario.
 
 ---
+## 🧪 Cómo usar la colección Postman
+
+1. Abre Postman.
+2. Haz clic en el botón **Import** (arriba a la izquierda).
+3. Selecciona el archivo [utec-api-collection.json](./postman/UTEC++.postman_collection.json).
+4. Una vez importado, abre una petición y presiona **Send** para probarla.
+
+Asegúrate de que el backend esté corriendo en `http://localhost:8080` o ajusta la URL si es necesario.
+
 
 ## Apéndices
 
